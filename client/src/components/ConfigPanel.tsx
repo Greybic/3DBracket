@@ -1,14 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useConfigurator } from "@/store/configurator";
+import { bracketTypes, materials, finishes } from "@shared/schema";
 
 export default function ConfigPanel() {
-  const { 
+  const {
     width, setWidth,
     height, setHeight,
     depth, setDepth,
-    color, setColor 
+    type, setType,
+    material, setMaterial,
+    finish, setFinish,
+    thickness, setThickness
   } = useConfigurator();
 
   return (
@@ -18,6 +29,66 @@ export default function ConfigPanel() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          <div className="space-y-2">
+            <Label>Bracket Type</Label>
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(bracketTypes).map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Material</Label>
+            <Select value={material} onValueChange={setMaterial}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select material" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(materials).map((material) => (
+                  <SelectItem key={material} value={material}>
+                    {material}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Finish</Label>
+            <Select value={finish} onValueChange={setFinish}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select finish" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(finishes).map((finish) => (
+                  <SelectItem key={finish} value={finish}>
+                    {finish}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Thickness (inches)</Label>
+            <Slider
+              value={[thickness]}
+              onValueChange={([value]) => setThickness(value)}
+              min={0.125}
+              max={0.5}
+              step={0.125}
+            />
+            <span className="text-sm text-muted-foreground">{thickness}"</span>
+          </div>
+
           <div className="space-y-2">
             <Label>Width (inches)</Label>
             <Slider
@@ -52,22 +123,6 @@ export default function ConfigPanel() {
               step={0.125}
             />
             <span className="text-sm text-muted-foreground">{depth}"</span>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Color</Label>
-            <div className="flex gap-2">
-              {["#CCCCCC", "#666666", "#000000"].map((c) => (
-                <button
-                  key={c}
-                  className={`w-8 h-8 rounded-full border-2 ${
-                    color === c ? "border-primary" : "border-transparent"
-                  }`}
-                  style={{ backgroundColor: c }}
-                  onClick={() => setColor(c)}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </CardContent>

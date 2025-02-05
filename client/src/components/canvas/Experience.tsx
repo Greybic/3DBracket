@@ -1,14 +1,11 @@
 import { OrbitControls, Stage } from "@react-three/drei";
 import Model from "./Model";
-import { useConfigurator } from "@/store/configurator";
 
 export default function Experience() {
-  const { color } = useConfigurator();
-
   return (
     <>
       <Stage environment="city" intensity={0.5}>
-        <Model color={color} />
+        <Model />
       </Stage>
       <OrbitControls 
         makeDefault 
