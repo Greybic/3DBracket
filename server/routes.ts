@@ -28,11 +28,11 @@ export function registerRoutes(app: Express): Server {
     try {
       await storage.createBracket({
         name: "Basic L Bracket",
-        width: 4,
-        height: 4,
-        depth: 0.25,
+        width: "4",
+        height: "4",
+        depth: "0.25",
         color: "#CCCCCC",
-        price: 9.99
+        price: "9.99"
       });
     } catch (error) {
       console.error("Failed to create sample bracket:", error);

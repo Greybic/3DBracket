@@ -1,4 +1,6 @@
 import { brackets, type Bracket, type InsertBracket } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getBrackets(): Promise<Bracket[]>;
@@ -6,29 +8,23 @@ export interface IStorage {
   createBracket(bracket: InsertBracket): Promise<Bracket>;
 }
 
-export class MemStorage implements IStorage {
-  private brackets: Map<number, Bracket>;
-  currentId: number;
-
-  constructor() {
-    this.brackets = new Map();
-    this.currentId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getBrackets(): Promise<Bracket[]> {
-    return Array.from(this.brackets.values());
+    return await db.select().from(brackets);
   }
 
   async getBracket(id: number): Promise<Bracket | undefined> {
-    return this.brackets.get(id);
+    const [bracket] = await db.select().from(brackets).where(eq(brackets.id, id));
+    return bracket || undefined;
   }
 
   async createBracket(insertBracket: InsertBracket): Promise<Bracket> {
-    const id = this.currentId++;
-    const bracket: Bracket = { ...insertBracket, id };
-    this.brackets.set(id, bracket);
+    const [bracket] = await db
+      .insert(brackets)
+      .values(insertBracket)
+      .returning();
     return bracket;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
