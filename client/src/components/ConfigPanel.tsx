@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useConfigurator } from "@/store/configurator";
 import { bracketTypes, materials, finishes } from "@shared/schema";
+import { Minus, Plus } from "lucide-react";
 
 export default function ConfigPanel() {
   const {
@@ -19,11 +22,13 @@ export default function ConfigPanel() {
     type, setType,
     material, setMaterial,
     finish, setFinish,
-    thickness, setThickness
+    thickness, setThickness,
+    quantity, setQuantity,
+    holes, setHoleDiameter,
   } = useConfigurator();
 
   return (
-    <Card className="h-full rounded-none border-0">
+    <Card className="h-full rounded-none border-0 overflow-y-auto">
       <CardHeader>
         <CardTitle>Bracket Configuration</CardTitle>
       </CardHeader>
@@ -123,6 +128,48 @@ export default function ConfigPanel() {
               step={0.125}
             />
             <span className="text-sm text-muted-foreground">{depth}"</span>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Hole Diameter (inches)</Label>
+            <Slider
+              value={[holes.diameter]}
+              onValueChange={([value]) => setHoleDiameter(value)}
+              min={0.125}
+              max={0.5}
+              step={0.0625}
+            />
+            <span className="text-sm text-muted-foreground">{holes.diameter}"</span>
+            <p className="text-sm text-muted-foreground mt-1">
+              Click on the bracket to add holes
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Quantity</Label>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <Input
+                type="number"
+                min={1}
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                className="w-20 text-center"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>

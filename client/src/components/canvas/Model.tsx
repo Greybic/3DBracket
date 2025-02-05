@@ -1,9 +1,12 @@
 import { useGLTF } from "@react-three/drei";
 import { useConfigurator } from "@/store/configurator";
 import * as THREE from "three";
+import { ThreeEvent } from "@react-three/fiber";
+import { ThreeBSP } from "three-js-csg";
+
 
 export default function Model() {
-  const { width, height, depth, material: materialType, finish, type, thickness } = useConfigurator();
+  const { width, height, depth, material: materialType, finish, type, thickness, holes, addHole } = useConfigurator();
 
   // Create geometry based on bracket type
   const createBracketGeometry = () => {
@@ -21,6 +24,43 @@ export default function Model() {
     }
   };
 
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    // Convert the click position to local coordinates
+    const localPoint = e.point.clone();
+    if (e.object.parent) {
+      e.object.parent.worldToLocal(localPoint);
+    }
+
+    addHole({ 
+      x: localPoint.x + width/2,
+      y: localPoint.y + height/2
+    });
+  };
+
+  const createHole = (geometry: THREE.BufferGeometry, position: THREE.Vector3) => {
+    const holePath = new THREE.Path();
+    holePath.absarc(0, 0, holes.diameter / 2, 0, Math.PI * 2, true);
+
+    const holeShape = new THREE.Shape();
+    holeShape.absarc(position.x, position.y, holes.diameter / 2, 0, Math.PI * 2, true);
+
+    const holeGeometry = new THREE.ExtrudeGeometry(holeShape, {
+      depth: depth + 0.1,
+      bevelEnabled: false
+    });
+
+    const holeMesh = new THREE.Mesh(holeGeometry);
+    holeMesh.position.z = -depth/2;
+
+    // Use CSG to subtract the hole
+    const bracketBSP = new ThreeBSP(geometry);
+    const holeBSP = new ThreeBSP(holeMesh);
+    const resultBSP = bracketBSP.subtract(holeBSP);
+
+    return resultBSP.toGeometry();
+  };
+
   const createLBracket = () => {
     const group = new THREE.Group();
     const material = new THREE.MeshStandardMaterial(getMaterialProperties());
@@ -30,10 +70,32 @@ export default function Model() {
     const verticalMesh = new THREE.Mesh(verticalGeometry, material);
     verticalMesh.position.x = -width/2 + thickness/2;
 
+    // Add holes to vertical plate
+    holes.positions.forEach((pos) => {
+      if (pos.x < thickness) {
+        const holePos = new THREE.Vector3(0, pos.y - height/2, 0);
+        verticalMesh.geometry = createHole(verticalMesh.geometry, holePos);
+      }
+    });
+
     // Horizontal plate
     const horizontalGeometry = new THREE.BoxGeometry(width, thickness, depth);
     const horizontalMesh = new THREE.Mesh(horizontalGeometry, material);
     horizontalMesh.position.y = -height/2 + thickness/2;
+
+    // Add holes to horizontal plate
+    holes.positions.forEach((pos) => {
+      if (pos.y < thickness) {
+        const holePos = new THREE.Vector3(pos.x - width/2, 0, 0);
+        horizontalMesh.geometry = createHole(horizontalMesh.geometry, holePos);
+      }
+    });
+
+    verticalMesh.userData = { isClickable: true };
+    horizontalMesh.userData = { isClickable: true };
+
+    verticalMesh.onClick = handleClick;
+    horizontalMesh.onClick = handleClick;
 
     group.add(verticalMesh);
     group.add(horizontalMesh);
