@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useConfigurator } from "@/store/configurator";
 import { bracketTypes, materials, finishes } from "@shared/schema";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 
 export default function ConfigPanel() {
   const {
@@ -25,6 +25,7 @@ export default function ConfigPanel() {
     thickness, setThickness,
     quantity, setQuantity,
     holes, setHoleDiameter,
+    addHole, removeHole,
   } = useConfigurator();
 
   return (
@@ -130,19 +131,79 @@ export default function ConfigPanel() {
             <span className="text-sm text-muted-foreground">{depth}"</span>
           </div>
 
-          <div className="space-y-2">
-            <Label>Hole Diameter (inches)</Label>
-            <Slider
-              value={[holes.diameter]}
-              onValueChange={([value]) => setHoleDiameter(value)}
-              min={0.125}
-              max={0.5}
-              step={0.0625}
-            />
-            <span className="text-sm text-muted-foreground">{holes.diameter}"</span>
-            <p className="text-sm text-muted-foreground mt-1">
-              Click on the bracket to add holes
-            </p>
+          <div className="space-y-4">
+            <div>
+              <Label>Holes</Label>
+              <div className="mt-2">
+                <Label className="text-sm">Hole Diameter (inches)</Label>
+                <Slider
+                  value={[holes.diameter]}
+                  onValueChange={([value]) => setHoleDiameter(value)}
+                  min={0.125}
+                  max={0.5}
+                  step={0.0625}
+                  className="mt-2"
+                />
+                <span className="text-sm text-muted-foreground">{holes.diameter}"</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => addHole({ x: width / 2, y: height / 2 })}
+              >
+                Add Hole
+              </Button>
+
+              {holes.positions.map((hole, index) => (
+                <div key={index} className="flex items-center gap-2 p-2 border rounded-md">
+                  <div className="flex-1 space-y-1">
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Label className="text-xs">X Position</Label>
+                        <Input
+                          type="number"
+                          value={hole.x}
+                          onChange={(e) => {
+                            const newHoles = [...holes.positions];
+                            newHoles[index] = { ...hole, x: parseFloat(e.target.value) || 0 };
+                            // Update hole position in state
+                            
+                          }}
+                          className="h-8"
+                          step={0.125}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <Label className="text-xs">Y Position</Label>
+                        <Input
+                          type="number"
+                          value={hole.y}
+                          onChange={(e) => {
+                            const newHoles = [...holes.positions];
+                            newHoles[index] = { ...hole, y: parseFloat(e.target.value) || 0 };
+                            // Update hole position in state
+                            
+                          }}
+                          className="h-8"
+                          step={0.125}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => removeHole(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">

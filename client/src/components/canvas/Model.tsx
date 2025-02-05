@@ -1,12 +1,10 @@
 import { useGLTF } from "@react-three/drei";
 import { useConfigurator } from "@/store/configurator";
 import * as THREE from "three";
-import { ThreeEvent } from "@react-three/fiber";
 import { ThreeBSP } from "three-js-csg";
 
-
 export default function Model() {
-  const { width, height, depth, material: materialType, finish, type, thickness, holes, addHole } = useConfigurator();
+  const { width, height, depth, material: materialType, finish, type, thickness, holes } = useConfigurator();
 
   // Create geometry based on bracket type
   const createBracketGeometry = () => {
@@ -22,20 +20,6 @@ export default function Model() {
       default:
         return createLBracket();
     }
-  };
-
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    // Convert the click position to local coordinates
-    const localPoint = e.point.clone();
-    if (e.object.parent) {
-      e.object.parent.worldToLocal(localPoint);
-    }
-
-    addHole({ 
-      x: localPoint.x + width/2,
-      y: localPoint.y + height/2
-    });
   };
 
   const createHole = (geometry: THREE.BufferGeometry, position: THREE.Vector3) => {
@@ -90,12 +74,6 @@ export default function Model() {
         horizontalMesh.geometry = createHole(horizontalMesh.geometry, holePos);
       }
     });
-
-    verticalMesh.userData = { isClickable: true };
-    horizontalMesh.userData = { isClickable: true };
-
-    verticalMesh.onClick = handleClick;
-    horizontalMesh.onClick = handleClick;
 
     group.add(verticalMesh);
     group.add(horizontalMesh);
