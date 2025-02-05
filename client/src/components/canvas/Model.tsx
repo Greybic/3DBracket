@@ -3,7 +3,7 @@ import { useConfigurator } from "@/store/configurator";
 import * as THREE from "three";
 
 export default function Model() {
-  const { width, height, depth, materialType, finish, type, thickness } = useConfigurator();
+  const { width, height, depth, material: materialType, finish, type, thickness } = useConfigurator();
 
   // Create geometry based on bracket type
   const createBracketGeometry = () => {
@@ -23,15 +23,16 @@ export default function Model() {
 
   const createLBracket = () => {
     const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial(getMaterialProperties());
 
     // Vertical plate
     const verticalGeometry = new THREE.BoxGeometry(thickness, height, depth);
-    const verticalMesh = new THREE.Mesh(verticalGeometry);
+    const verticalMesh = new THREE.Mesh(verticalGeometry, material);
     verticalMesh.position.x = -width/2 + thickness/2;
 
     // Horizontal plate
     const horizontalGeometry = new THREE.BoxGeometry(width, thickness, depth);
-    const horizontalMesh = new THREE.Mesh(horizontalGeometry);
+    const horizontalMesh = new THREE.Mesh(horizontalGeometry, material);
     horizontalMesh.position.y = -height/2 + thickness/2;
 
     group.add(verticalMesh);
@@ -41,20 +42,21 @@ export default function Model() {
 
   const createCornerBracket = () => {
     const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial(getMaterialProperties());
 
     // Back plate
     const backGeometry = new THREE.BoxGeometry(thickness, height, depth);
-    const backMesh = new THREE.Mesh(backGeometry);
+    const backMesh = new THREE.Mesh(backGeometry, material);
     backMesh.position.x = -width/2 + thickness/2;
 
     // Bottom plate
     const bottomGeometry = new THREE.BoxGeometry(width, thickness, depth);
-    const bottomMesh = new THREE.Mesh(bottomGeometry);
+    const bottomMesh = new THREE.Mesh(bottomGeometry, material);
     bottomMesh.position.y = -height/2 + thickness/2;
 
     // Side plate
     const sideGeometry = new THREE.BoxGeometry(width, height, thickness);
-    const sideMesh = new THREE.Mesh(sideGeometry);
+    const sideMesh = new THREE.Mesh(sideGeometry, material);
     sideMesh.position.z = -depth/2 + thickness/2;
 
     group.add(backMesh);
@@ -65,16 +67,19 @@ export default function Model() {
 
   const createFloatingShelfBracket = () => {
     const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial(getMaterialProperties());
 
     // Main vertical support
     const mainSupport = new THREE.Mesh(
-      new THREE.BoxGeometry(thickness, height, depth)
+      new THREE.BoxGeometry(thickness, height, depth),
+      material
     );
     mainSupport.position.x = -width/2 + thickness/2;
 
     // Top horizontal support
     const topSupport = new THREE.Mesh(
-      new THREE.BoxGeometry(width, thickness, depth)
+      new THREE.BoxGeometry(width, thickness, depth),
+      material
     );
     topSupport.position.y = height/2 - thickness/2;
 
@@ -82,7 +87,8 @@ export default function Model() {
     const diagonalHeight = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
     const angle = Math.atan2(height, width);
     const diagonalSupport = new THREE.Mesh(
-      new THREE.BoxGeometry(thickness, diagonalHeight, depth)
+      new THREE.BoxGeometry(thickness, diagonalHeight, depth),
+      material
     );
     diagonalSupport.position.x = -width/4;
     diagonalSupport.position.y = -height/4;
@@ -96,23 +102,25 @@ export default function Model() {
 
   const createHeavyDutyBracket = () => {
     const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial(getMaterialProperties());
     const thickerDimension = thickness * 1.5;
 
     // Vertical plate
     const verticalGeometry = new THREE.BoxGeometry(thickerDimension, height, depth);
-    const verticalMesh = new THREE.Mesh(verticalGeometry);
+    const verticalMesh = new THREE.Mesh(verticalGeometry, material);
     verticalMesh.position.x = -width/2 + thickerDimension/2;
 
     // Horizontal plate
     const horizontalGeometry = new THREE.BoxGeometry(width, thickerDimension, depth);
-    const horizontalMesh = new THREE.Mesh(horizontalGeometry);
+    const horizontalMesh = new THREE.Mesh(horizontalGeometry, material);
     horizontalMesh.position.y = -height/2 + thickerDimension/2;
 
     // Reinforcement rib
     const ribHeight = Math.sqrt(Math.pow(width/2, 2) + Math.pow(height/2, 2));
     const angle = Math.atan2(height, width);
     const reinforcementRib = new THREE.Mesh(
-      new THREE.BoxGeometry(thickness, ribHeight, depth)
+      new THREE.BoxGeometry(thickness, ribHeight, depth),
+      material
     );
     reinforcementRib.position.x = -width/4;
     reinforcementRib.position.y = -height/4;
@@ -154,12 +162,9 @@ export default function Model() {
     return { color, metalness, roughness };
   };
 
-  const materialProps = getMaterialProperties();
   const bracketGeometry = createBracketGeometry();
 
   return (
-    <primitive object={bracketGeometry} castShadow receiveShadow>
-      <meshStandardMaterial {...materialProps} />
-    </primitive>
+    <primitive object={bracketGeometry} castShadow receiveShadow />
   );
 }
