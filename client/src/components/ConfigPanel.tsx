@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,8 +15,8 @@ import { baseWidths, surfaceTreatments, hardwareOptions } from "@shared/schema";
 export default function ConfigPanel() {
   const {
     baseWidth, setBaseWidth,
-    height, setHeight,
-    depth, setDepth,
+    height,
+    depth,
     surfaceTreatment, setSurfaceTreatment,
     hardware, setHardware,
     quantity, setQuantity,
@@ -50,27 +49,17 @@ export default function ConfigPanel() {
           </div>
 
           <div className="space-y-2">
-            <Label>Height (inches)</Label>
-            <Slider
-              value={[height]}
-              onValueChange={([value]) => setHeight(value)}
-              min={4}
-              max={24}
-              step={0.5}
-            />
-            <span className="text-sm text-muted-foreground">{height}"</span>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Depth (inches)</Label>
-            <Slider
-              value={[depth]}
-              onValueChange={([value]) => setDepth(value)}
-              min={0.125}
-              max={2}
-              step={0.125}
-            />
-            <span className="text-sm text-muted-foreground">{depth}"</span>
+            <Label>Dimensions</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-sm text-muted-foreground">Height:</span>
+                <p className="font-medium">{height} inches</p>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Depth:</span>
+                <p className="font-medium">{depth} inches</p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
