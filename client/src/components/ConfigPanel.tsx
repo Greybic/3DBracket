@@ -14,6 +14,7 @@ import { baseWidths, surfaceTreatments, hardwareOptions } from "@shared/schema";
 
 export default function ConfigPanel() {
   const {
+    bracketType,
     baseWidth,
     height,
     depth,
@@ -29,8 +30,9 @@ export default function ConfigPanel() {
 
   return (
     <Card className="h-full rounded-none border-0 overflow-y-auto">
-      <CardHeader>
+      <CardHeader className="space-y-1.5">
         <CardTitle>Bracket Configuration</CardTitle>
+        <p className="text-sm text-muted-foreground">{bracketType}</p>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">

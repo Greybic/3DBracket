@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import { baseWidths, surfaceTreatments, hardwareOptions } from '@shared/schema';
+import { baseWidths, surfaceTreatments, hardwareOptions, bracketTypes } from '@shared/schema';
 
 interface ConfiguratorState {
+  bracketType: string;
   baseWidth: string;
   height: number;
   depth: number;
@@ -11,6 +12,7 @@ interface ConfiguratorState {
   hardware: string;
   quantity: number;
   customOptions: Record<string, unknown>;
+  setBracketType: (type: string) => void;
   setBaseWidth: (width: string) => void;
   setHeight: (height: number) => void;
   setDepth: (depth: number) => void;
@@ -24,6 +26,7 @@ interface ConfiguratorState {
 }
 
 export const useConfigurator = create<ConfiguratorState>((set, get) => ({
+  bracketType: bracketTypes.POST_OR_GIRDER,
   baseWidth: baseWidths.BASE_4,
   height: 4,
   depth: 0.25,
@@ -34,6 +37,7 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
   quantity: 1,
   customOptions: {},
 
+  setBracketType: (bracketType) => set({ bracketType }),
   setBaseWidth: (baseWidth) => set({ baseWidth }),
   setHeight: (height) => set({ height }),
   setDepth: (depth) => set({ depth }),
@@ -49,9 +53,8 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
 
   calculatePrice: () => {
     const state = get();
-    let basePrice = 39.99; // Base price for smallest bracket
+    let basePrice = 39.99;
 
-    // Add width-based price increase
     switch (state.baseWidth) {
       case baseWidths.BASE_6:
         basePrice += 10;
@@ -67,7 +70,6 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
         break;
     }
 
-    // Add surface treatment cost
     if (state.surfaceTreatment === surfaceTreatments.BLACK_POWDER ||
         state.surfaceTreatment === surfaceTreatments.WHITE_POWDER ||
         state.surfaceTreatment === surfaceTreatments.CLEAR_POWDER) {
@@ -76,7 +78,6 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
       basePrice += 10;
     }
 
-    // Add hardware kit cost
     if (state.hardware !== hardwareOptions.NONE) {
       basePrice += 3.99;
     }
