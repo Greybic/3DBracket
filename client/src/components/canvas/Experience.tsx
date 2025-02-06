@@ -1,8 +1,40 @@
 import { OrbitControls, Stage, Environment, ContactShadows, Grid } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { useEffect } from "react";
 import Model from "./Model";
 
 export default function Experience() {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+
+    const handleZoomIn = () => {
+      camera.position.multiplyScalar(0.8);
+    };
+
+    const handleZoomOut = () => {
+      camera.position.multiplyScalar(1.2);
+    };
+
+    const handleReset = () => {
+      camera.position.set(4, 4, 4);
+      camera.lookAt(0, 0, 0);
+    };
+
+    canvas.addEventListener('zoom-in', handleZoomIn);
+    canvas.addEventListener('zoom-out', handleZoomOut);
+    canvas.addEventListener('reset-camera', handleReset);
+
+    return () => {
+      canvas.removeEventListener('zoom-in', handleZoomIn);
+      canvas.removeEventListener('zoom-out', handleZoomOut);
+      canvas.removeEventListener('reset-camera', handleReset);
+    };
+  }, [camera]);
+
   return (
     <>
       {/* Set solid dark background */}
