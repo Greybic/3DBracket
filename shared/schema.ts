@@ -30,6 +30,7 @@ export const hardwareOptions = {
 
 export const brackets = pgTable("brackets", {
   id: serial("id").primaryKey(),
+  productId: text("product_id").notNull().default('DEFAULT_BRACKET'),
   name: text("name").notNull(),
   baseWidth: text("base_width").notNull(),
   height: decimal("height").notNull(),
