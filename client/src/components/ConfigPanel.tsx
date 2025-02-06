@@ -14,7 +14,7 @@ import { baseWidths, surfaceTreatments, hardwareOptions } from "@shared/schema";
 
 export default function ConfigPanel() {
   const {
-    baseWidth, setBaseWidth,
+    baseWidth,
     height,
     depth,
     surfaceTreatment, setSurfaceTreatment,
@@ -33,24 +33,12 @@ export default function ConfigPanel() {
       <CardContent>
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label>Base Width</Label>
-            <Select value={baseWidth} onValueChange={setBaseWidth}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select width" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(baseWidths).map((width) => (
-                  <SelectItem key={width} value={width}>
-                    {width}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
             <Label>Dimensions</Label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <span className="text-sm text-muted-foreground">Base Width:</span>
+                <p className="font-medium">{baseWidth}</p>
+              </div>
               <div>
                 <span className="text-sm text-muted-foreground">Height:</span>
                 <p className="font-medium">{height} inches</p>
