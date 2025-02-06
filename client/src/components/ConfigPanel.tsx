@@ -11,22 +11,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useConfigurator } from "@/store/configurator";
-import { bracketTypes, materials, finishes } from "@shared/schema";
-import { Minus, Plus, X } from "lucide-react";
+import { baseWidths, surfaceTreatments, hardwareOptions } from "@shared/schema";
 
 export default function ConfigPanel() {
   const {
-    width, setWidth,
+    baseWidth, setBaseWidth,
     height, setHeight,
     depth, setDepth,
-    type, setType,
-    material, setMaterial,
-    finish, setFinish,
-    thickness, setThickness,
+    surfaceTreatment, setSurfaceTreatment,
+    hardware, setHardware,
     quantity, setQuantity,
-    holes, setHoleDiameter,
-    addHole, removeHole,
+    calculatePrice,
   } = useConfigurator();
+
+  const price = calculatePrice();
 
   return (
     <Card className="h-full rounded-none border-0 overflow-y-auto">
@@ -36,75 +34,19 @@ export default function ConfigPanel() {
       <CardContent>
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label>Bracket Type</Label>
-            <Select value={type} onValueChange={setType}>
+            <Label>Base Width</Label>
+            <Select value={baseWidth} onValueChange={setBaseWidth}>
               <SelectTrigger>
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder="Select width" />
               </SelectTrigger>
               <SelectContent>
-                {Object.values(bracketTypes).map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
+                {Object.values(baseWidths).map((width) => (
+                  <SelectItem key={width} value={width}>
+                    {width}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Material</Label>
-            <Select value={material} onValueChange={setMaterial}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select material" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(materials).map((material) => (
-                  <SelectItem key={material} value={material}>
-                    {material}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Finish</Label>
-            <Select value={finish} onValueChange={setFinish}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select finish" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(finishes).map((finish) => (
-                  <SelectItem key={finish} value={finish}>
-                    {finish}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Thickness (inches)</Label>
-            <Slider
-              value={[thickness]}
-              onValueChange={([value]) => setThickness(value)}
-              min={0.125}
-              max={0.5}
-              step={0.125}
-            />
-            <span className="text-sm text-muted-foreground">{thickness}"</span>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Width (inches)</Label>
-            <Slider
-              value={[width]}
-              onValueChange={([value]) => setWidth(value)}
-              min={1}
-              max={12}
-              step={0.1}
-            />
-            <span className="text-sm text-muted-foreground">{width}"</span>
           </div>
 
           <div className="space-y-2">
@@ -112,9 +54,9 @@ export default function ConfigPanel() {
             <Slider
               value={[height]}
               onValueChange={([value]) => setHeight(value)}
-              min={1}
-              max={12}
-              step={0.1}
+              min={4}
+              max={24}
+              step={0.5}
             />
             <span className="text-sm text-muted-foreground">{height}"</span>
           </div>
@@ -131,79 +73,36 @@ export default function ConfigPanel() {
             <span className="text-sm text-muted-foreground">{depth}"</span>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <Label>Holes</Label>
-              <div className="mt-2">
-                <Label className="text-sm">Hole Diameter (inches)</Label>
-                <Slider
-                  value={[holes.diameter]}
-                  onValueChange={([value]) => setHoleDiameter(value)}
-                  min={0.125}
-                  max={0.5}
-                  step={0.0625}
-                  className="mt-2"
-                />
-                <span className="text-sm text-muted-foreground">{holes.diameter}"</span>
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label>Surface Treatment</Label>
+            <Select value={surfaceTreatment} onValueChange={setSurfaceTreatment}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select surface treatment" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(surfaceTreatments).map((treatment) => (
+                  <SelectItem key={treatment} value={treatment}>
+                    {treatment}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="space-y-2">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => addHole({ x: width / 2, y: height / 2 })}
-              >
-                Add Hole
-              </Button>
-
-              {holes.positions.map((hole, index) => (
-                <div key={index} className="flex items-center gap-2 p-2 border rounded-md">
-                  <div className="flex-1 space-y-1">
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Label className="text-xs">X Position</Label>
-                        <Input
-                          type="number"
-                          value={hole.x}
-                          onChange={(e) => {
-                            const newHoles = [...holes.positions];
-                            newHoles[index] = { ...hole, x: parseFloat(e.target.value) || 0 };
-                            // Update hole position in state
-                            
-                          }}
-                          className="h-8"
-                          step={0.125}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <Label className="text-xs">Y Position</Label>
-                        <Input
-                          type="number"
-                          value={hole.y}
-                          onChange={(e) => {
-                            const newHoles = [...holes.positions];
-                            newHoles[index] = { ...hole, y: parseFloat(e.target.value) || 0 };
-                            // Update hole position in state
-                            
-                          }}
-                          className="h-8"
-                          step={0.125}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={() => removeHole(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
+          <div className="space-y-2">
+            <Label>Hardware</Label>
+            <Select value={hardware} onValueChange={setHardware}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select hardware" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(hardwareOptions).map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -214,7 +113,7 @@ export default function ConfigPanel() {
                 size="icon"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
               >
-                <Minus className="h-4 w-4" />
+                -
               </Button>
               <Input
                 type="number"
@@ -228,9 +127,17 @@ export default function ConfigPanel() {
                 size="icon"
                 onClick={() => setQuantity(quantity + 1)}
               >
-                <Plus className="h-4 w-4" />
+                +
               </Button>
             </div>
+          </div>
+
+          <div className="pt-4 border-t">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-semibold">Total Price:</span>
+              <span className="text-lg font-semibold">${price.toFixed(2)}</span>
+            </div>
+            <Button className="w-full mt-4">Add to Cart</Button>
           </div>
         </div>
       </CardContent>

@@ -1,69 +1,72 @@
 import { create } from 'zustand';
-import { bracketTypes, materials, finishes } from '@shared/schema';
-
-interface HoleConfig {
-  diameter: number;
-  positions: { x: number; y: number }[];
-}
+import { baseWidths, surfaceTreatments, hardwareOptions } from '@shared/schema';
 
 interface ConfiguratorState {
-  width: number;
+  baseWidth: string;
   height: number;
   depth: number;
-  type: string;
-  material: string;
-  finish: string;
-  thickness: number;
+  surfaceTreatment: string;
+  hardware: string;
   quantity: number;
-  holes: HoleConfig;
-  setWidth: (width: number) => void;
+  customOptions: Record<string, unknown>;
+  setBaseWidth: (width: string) => void;
   setHeight: (height: number) => void;
   setDepth: (depth: number) => void;
-  setType: (type: string) => void;
-  setMaterial: (material: string) => void;
-  setFinish: (finish: string) => void;
-  setThickness: (thickness: number) => void;
+  setSurfaceTreatment: (treatment: string) => void;
+  setHardware: (hardware: string) => void;
   setQuantity: (quantity: number) => void;
-  setHoleDiameter: (diameter: number) => void;
-  addHole: (position: { x: number; y: number }) => void;
-  removeHole: (index: number) => void;
+  setCustomOption: (key: string, value: unknown) => void;
+  calculatePrice: () => number;
 }
 
-export const useConfigurator = create<ConfiguratorState>((set) => ({
-  width: 4,
+export const useConfigurator = create<ConfiguratorState>((set, get) => ({
+  baseWidth: baseWidths.BASE_4,
   height: 4,
   depth: 0.25,
-  type: bracketTypes.L_BRACKET,
-  material: materials.STEEL,
-  finish: finishes.RAW,
-  thickness: 0.25,
+  surfaceTreatment: surfaceTreatments.RAW,
+  hardware: hardwareOptions.NONE,
   quantity: 1,
-  holes: {
-    diameter: 0.25,
-    positions: [],
-  },
-  setWidth: (width) => set({ width }),
+  customOptions: {},
+
+  setBaseWidth: (baseWidth) => set({ baseWidth }),
   setHeight: (height) => set({ height }),
   setDepth: (depth) => set({ depth }),
-  setType: (type) => set({ type }),
-  setMaterial: (material) => set({ material }),
-  setFinish: (finish) => set({ finish }),
-  setThickness: (thickness) => set({ thickness }),
+  setSurfaceTreatment: (surfaceTreatment) => set({ surfaceTreatment }),
+  setHardware: (hardware) => set({ hardware }),
   setQuantity: (quantity) => set({ quantity }),
-  setHoleDiameter: (diameter) => 
-    set((state) => ({ holes: { ...state.holes, diameter } })),
-  addHole: (position) =>
+  setCustomOption: (key, value) => 
     set((state) => ({
-      holes: {
-        ...state.holes,
-        positions: [...state.holes.positions, position],
-      },
+      customOptions: { ...state.customOptions, [key]: value }
     })),
-  removeHole: (index) =>
-    set((state) => ({
-      holes: {
-        ...state.holes,
-        positions: state.holes.positions.filter((_, i) => i !== index),
-      },
-    })),
+
+  calculatePrice: () => {
+    const state = get();
+    let basePrice = 39.99; // Base price for smallest bracket
+
+    // Add width-based price increase
+    const widthPrices = {
+      [baseWidths.BASE_4]: 0,
+      [baseWidths.BASE_6]: 10,
+      [baseWidths.BASE_8]: 20,
+      [baseWidths.BASE_10]: 30,
+      [baseWidths.BASE_12]: 40,
+    };
+    basePrice += widthPrices[state.baseWidth] || 0;
+
+    // Add surface treatment cost
+    if (state.surfaceTreatment === surfaceTreatments.BLACK_POWDER ||
+        state.surfaceTreatment === surfaceTreatments.WHITE_POWDER ||
+        state.surfaceTreatment === surfaceTreatments.CLEAR_POWDER) {
+      basePrice += 15;
+    } else if (state.surfaceTreatment === surfaceTreatments.PRIMER) {
+      basePrice += 10;
+    }
+
+    // Add hardware kit cost
+    if (state.hardware !== hardwareOptions.NONE) {
+      basePrice += 3.99;
+    }
+
+    return basePrice * state.quantity;
+  }
 }));
