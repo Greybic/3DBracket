@@ -7,11 +7,11 @@ export const bracketTypes = {
 } as const;
 
 export const baseWidths = {
-  BASE_4: "4\" (10.2 cm)",
-  BASE_6: "6\" (15.2 cm)",
-  BASE_8: "8\" (20.3 cm)",
-  BASE_10: "10\" (25.4 cm)",
-  BASE_12: "12\" (30.5 cm)",
+  BASE_4: "4\"",
+  BASE_6: "6\"",
+  BASE_8: "8\"",
+  BASE_10: "10\"",
+  BASE_12: "12\"",
 } as const;
 
 export const surfaceTreatments = {
@@ -34,6 +34,8 @@ export const brackets = pgTable("brackets", {
   baseWidth: text("base_width").notNull(),
   height: decimal("height").notNull(),
   depth: decimal("depth").notNull(),
+  plateThickness: decimal("plate_thickness").notNull(),
+  gussetThickness: decimal("gusset_thickness").notNull(),
   surfaceTreatment: text("surface_treatment").notNull(),
   hardware: text("hardware").notNull(),
   quantity: integer("quantity").notNull().default(1),
@@ -50,6 +52,12 @@ export const insertBracketSchema = createInsertSchema(brackets).extend({
   }),
   depth: z.string().refine((val) => !isNaN(parseFloat(val)), {
     message: "Depth must be a valid number",
+  }),
+  plateThickness: z.string().refine((val) => !isNaN(parseFloat(val)), {
+    message: "Plate thickness must be a valid number",
+  }),
+  gussetThickness: z.string().refine((val) => !isNaN(parseFloat(val)), {
+    message: "Gusset thickness must be a valid number",
   }),
   customOptions: z.record(z.unknown()).default({}),
 });

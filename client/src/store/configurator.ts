@@ -5,6 +5,8 @@ interface ConfiguratorState {
   baseWidth: string;
   height: number;
   depth: number;
+  plateThickness: number;
+  gussetThickness: number;
   surfaceTreatment: string;
   hardware: string;
   quantity: number;
@@ -12,6 +14,8 @@ interface ConfiguratorState {
   setBaseWidth: (width: string) => void;
   setHeight: (height: number) => void;
   setDepth: (depth: number) => void;
+  setPlateThickness: (thickness: number) => void;
+  setGussetThickness: (thickness: number) => void;
   setSurfaceTreatment: (treatment: string) => void;
   setHardware: (hardware: string) => void;
   setQuantity: (quantity: number) => void;
@@ -23,6 +27,8 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
   baseWidth: baseWidths.BASE_4,
   height: 4,
   depth: 0.25,
+  plateThickness: 0.25,
+  gussetThickness: 0.25,
   surfaceTreatment: surfaceTreatments.RAW,
   hardware: hardwareOptions.NONE,
   quantity: 1,
@@ -31,6 +37,8 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
   setBaseWidth: (baseWidth) => set({ baseWidth }),
   setHeight: (height) => set({ height }),
   setDepth: (depth) => set({ depth }),
+  setPlateThickness: (plateThickness) => set({ plateThickness }),
+  setGussetThickness: (gussetThickness) => set({ gussetThickness }),
   setSurfaceTreatment: (surfaceTreatment) => set({ surfaceTreatment }),
   setHardware: (hardware) => set({ hardware }),
   setQuantity: (quantity) => set({ quantity }),
@@ -44,14 +52,20 @@ export const useConfigurator = create<ConfiguratorState>((set, get) => ({
     let basePrice = 39.99; // Base price for smallest bracket
 
     // Add width-based price increase
-    const widthPrices = {
-      [baseWidths.BASE_4]: 0,
-      [baseWidths.BASE_6]: 10,
-      [baseWidths.BASE_8]: 20,
-      [baseWidths.BASE_10]: 30,
-      [baseWidths.BASE_12]: 40,
-    };
-    basePrice += widthPrices[state.baseWidth] || 0;
+    switch (state.baseWidth) {
+      case baseWidths.BASE_6:
+        basePrice += 10;
+        break;
+      case baseWidths.BASE_8:
+        basePrice += 20;
+        break;
+      case baseWidths.BASE_10:
+        basePrice += 30;
+        break;
+      case baseWidths.BASE_12:
+        basePrice += 40;
+        break;
+    }
 
     // Add surface treatment cost
     if (state.surfaceTreatment === surfaceTreatments.BLACK_POWDER ||

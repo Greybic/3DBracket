@@ -17,6 +17,8 @@ export default function ConfigPanel() {
     baseWidth,
     height,
     depth,
+    plateThickness,
+    gussetThickness,
     surfaceTreatment, setSurfaceTreatment,
     hardware, setHardware,
     quantity, setQuantity,
@@ -32,20 +34,28 @@ export default function ConfigPanel() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="space-y-2">
+          <div className="space-y-4">
             <Label>Dimensions</Label>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
               <div>
                 <span className="text-sm text-muted-foreground">Base Width:</span>
                 <p className="font-medium">{baseWidth}</p>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Height:</span>
-                <p className="font-medium">{height} inches</p>
+                <p className="font-medium">{height}"</p>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Depth:</span>
-                <p className="font-medium">{depth} inches</p>
+                <p className="font-medium">{depth}"</p>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Plate Thickness:</span>
+                <p className="font-medium">{plateThickness}"</p>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Gusset Thickness:</span>
+                <p className="font-medium">{gussetThickness}"</p>
               </div>
             </div>
           </div>
