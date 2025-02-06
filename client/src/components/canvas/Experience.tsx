@@ -1,20 +1,12 @@
-import { OrbitControls, Stage, Environment, ContactShadows, Grid, GradientTexture } from "@react-three/drei";
+import { OrbitControls, Stage, Environment, ContactShadows, Grid } from "@react-three/drei";
 import * as THREE from "three";
 import Model from "./Model";
 
 export default function Experience() {
   return (
     <>
-      {/* Create gradient background */}
-      <mesh position={[0, 0, -10]}>
-        <planeGeometry args={[100, 100]} />
-        <meshBasicMaterial>
-          <GradientTexture
-            stops={[0, 1]} // Gradient stops
-            colors={['#2a2a2a', '#ffffff']} // Dark gray to white
-          />
-        </meshBasicMaterial>
-      </mesh>
+      {/* Set solid dark background */}
+      <color attach="background" args={["#1a1a1a"]} />
 
       <Stage
         environment="warehouse"
@@ -26,7 +18,7 @@ export default function Experience() {
         <Model />
       </Stage>
 
-      {/* Adjusted grid position to be level with the floor */}
+      {/* White grid with fade-out effect */}
       <Grid
         position={[0, -2, 0]}
         args={[10.5, 10.5]}
