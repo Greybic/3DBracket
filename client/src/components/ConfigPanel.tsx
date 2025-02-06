@@ -27,6 +27,7 @@ export default function ConfigPanel() {
   } = useConfigurator();
 
   const price = calculatePrice();
+  const holeSize = 0.375; // 3/8" mounting hole size
 
   return (
     <Card className="h-full rounded-none border-0 overflow-y-auto">
@@ -58,6 +59,10 @@ export default function ConfigPanel() {
               <div>
                 <span className="text-sm text-muted-foreground">Gusset Thickness:</span>
                 <p className="font-medium">{gussetThickness}"</p>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Mounting Hole Size:</span>
+                <p className="font-medium">{holeSize}" (3/8")</p>
               </div>
             </div>
           </div>
