@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 
 export default function Configurator() {
   return (
@@ -18,7 +18,7 @@ export default function Configurator() {
       </div>
       <div className="flex-1 relative">
         <Canvas
-          camera={{ position: [4, 4, 4], fov: 50 }}
+          camera={{ position: [6, 6, 6], fov: 50 }}
           className="w-full h-full bg-neutral-900"
         >
           <Experience />
@@ -88,7 +88,7 @@ export default function Configurator() {
                   }}
                   className="bg-white hover:bg-blue-50"
                 >
-                  <Maximize2 className="h-5 w-5 text-neutral-800" />
+                  <RotateCcw className="h-5 w-5 text-neutral-800" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>

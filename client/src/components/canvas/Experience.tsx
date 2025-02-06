@@ -20,7 +20,7 @@ export default function Experience() {
     };
 
     const handleReset = () => {
-      camera.position.set(4, 4, 4);
+      camera.position.set(6, 6, 6);
       camera.lookAt(0, 0, 0);
     };
 
