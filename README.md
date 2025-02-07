@@ -1,5 +1,17 @@
-git clone https://github.com/YourUsername/3DBracket.git
-cd 3DBracket
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/Greybic/3D.git
+git push -u origin main
+```
+
+## Local Development Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Greybic/3D.git
+cd 3D
 ```
 
 2. Install dependencies:
@@ -37,7 +49,9 @@ npm run dev
 ```
 The application will be available at `http://localhost:5000`
 
-## Hosting on Hostinger
+## Deployment
+
+### Hosting on Hostinger
 
 1. Build the application:
 ```bash
