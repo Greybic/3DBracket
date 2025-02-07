@@ -1,6 +1,54 @@
+# Dependencies
 node_modules
+npm-debug.log
+package-lock.json
+
+# Build outputs
 dist
+build
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor files
+.vscode
+.idea
+*.swp
+*.swo
 .DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Database
+*.sqlite
+*.db
+
+# Cache directories
+.cache
+.npm
+.eslintcache
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+*.pem
+*.pid
+*.seed
+*.pid.lock
+
+# Original entries (kept for completeness, potential duplicates removed)
 server/public
 vite.config.ts.*
 *.tar.gz
